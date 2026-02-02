@@ -1,6 +1,6 @@
 # alt-ime-ahk
 
-Alt空打ちでIME切り替え + CapsLockをCtrlにリマップするAutoHotkey v2スクリプト
+Alt空打ちでIME切り替えするAutoHotkey v2スクリプト
 
 ## 機能
 
@@ -8,7 +8,6 @@ Alt空打ちでIME切り替え + CapsLockをCtrlにリマップするAutoHotkey 
 |------|------|
 | 左Alt 空打ち | IME OFF（英数） |
 | 右Alt 空打ち | IME ON（かな） |
-| CapsLock | Ctrlとして動作 |
 | Ctrl+Space | IMEトグル |
 
 ※ Alt+他のキー（Alt+Tab、Alt+F4など）は通常通り動作します

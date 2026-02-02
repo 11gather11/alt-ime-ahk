@@ -140,9 +140,6 @@ RAlt up:: {
 }
 #HotIf
 
-; CapsLock を Ctrl にリマップ
-CapsLock::Ctrl
-
 ; Ctrl+Space でIMEトグル
 ^Space:: {
     if (IME_GET())
