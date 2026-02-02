@@ -14,7 +14,7 @@ IME_GET(hWnd := "") {
         0x0283,  ; WM_IME_CONTROL
         0x0005,  ; IMC_GETOPENSTATUS
         0,
-        ,
+        0,
         "ahk_id " . DllCall("imm32\ImmGetDefaultIMEWnd", "Ptr", hWnd, "Ptr")
     )
 }
@@ -33,7 +33,7 @@ IME_SET(SetSts, hWnd := "") {
         0x0283,  ; WM_IME_CONTROL
         0x0006,  ; IMC_SETOPENSTATUS
         SetSts,
-        ,
+        0,
         "ahk_id " . DllCall("imm32\ImmGetDefaultIMEWnd", "Ptr", hWnd, "Ptr")
     )
 
