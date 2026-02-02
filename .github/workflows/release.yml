@@ -12,20 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install AutoHotkey v2
+      - name: Download AutoHotkey v2
         shell: pwsh
         run: |
-          # GitHubリリースから直接ダウンロード
+          # GitHubリリースからzip版をダウンロード
           $release = Invoke-RestMethod -Uri "https://api.github.com/repos/AutoHotkey/AutoHotkey/releases/latest"
-          $asset = $release.assets | Where-Object { $_.name -match "AutoHotkey_.*_setup\.exe$" } | Select-Object -First 1
-          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "ahk-setup.exe"
-          Start-Process -FilePath "ahk-setup.exe" -Args "/S" -Wait
+          $asset = $release.assets | Where-Object { $_.name -match "AutoHotkey_.*\.zip$" } | Select-Object -First 1
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "ahk.zip"
+          Expand-Archive -Path "ahk.zip" -DestinationPath "ahk"
 
       - name: Compile script
         shell: pwsh
         run: |
-          $ahk2exe = "C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
-          & $ahk2exe /in "alt-ime-ahk.ahk" /out "alt-ime-ahk.exe"
+          $ahk2exe = Get-ChildItem -Path "ahk" -Recurse -Filter "Ahk2Exe.exe" | Select-Object -First 1
+          & $ahk2exe.FullName /in "alt-ime-ahk.ahk" /out "alt-ime-ahk.exe"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
