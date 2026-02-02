@@ -1,0 +1,31 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install AutoHotkey v2
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://www.autohotkey.com/download/ahk-v2.exe" -OutFile "ahk-v2-setup.exe"
+          Start-Process -FilePath "ahk-v2-setup.exe" -Args "/S" -Wait
+
+      - name: Compile script
+        shell: pwsh
+        run: |
+          $ahk2exe = "C:\Program Files\AutoHotkey\Compiler\Ahk2Exe.exe"
+          & $ahk2exe /in "alt-ime-ahk.ahk" /out "alt-ime-ahk.exe"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: alt-ime-ahk.exe
+          generate_release_notes: true
