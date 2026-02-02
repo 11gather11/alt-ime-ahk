@@ -12,30 +12,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download AutoHotkey v2
+      - name: Download AutoHotkey v2 and Ahk2Exe
         shell: pwsh
         run: |
-          # GitHubリリースからzip版をダウンロード
-          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/AutoHotkey/AutoHotkey/releases/latest"
-          $asset = $release.assets | Where-Object { $_.name -match "AutoHotkey_.*\.zip$" } | Select-Object -First 1
-          Write-Host "Downloading: $($asset.name)"
-          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "ahk.zip"
+          # AutoHotkey v2 をダウンロード
+          $ahkRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/AutoHotkey/AutoHotkey/releases/latest"
+          $ahkAsset = $ahkRelease.assets | Where-Object { $_.name -match "AutoHotkey_.*\.zip$" } | Select-Object -First 1
+          Invoke-WebRequest -Uri $ahkAsset.browser_download_url -OutFile "ahk.zip"
           Expand-Archive -Path "ahk.zip" -DestinationPath "ahk"
-          # 構造確認
-          Write-Host "ZIP contents:"
-          Get-ChildItem -Path "ahk" -Recurse | ForEach-Object { Write-Host $_.FullName }
+
+          # Ahk2Exe をダウンロード
+          $ahk2exeRelease = Invoke-RestMethod -Uri "https://api.github.com/repos/AutoHotkey/Ahk2Exe/releases/latest"
+          $ahk2exeAsset = $ahk2exeRelease.assets | Where-Object { $_.name -match "\.zip$" } | Select-Object -First 1
+          Invoke-WebRequest -Uri $ahk2exeAsset.browser_download_url -OutFile "ahk2exe.zip"
+          Expand-Archive -Path "ahk2exe.zip" -DestinationPath "ahk/Compiler"
 
       - name: Compile script
         shell: pwsh
         run: |
-          $ahk2exe = Get-ChildItem -Path "ahk" -Recurse -Filter "Ahk2Exe.exe" | Select-Object -First 1
-          if ($ahk2exe) {
-            Write-Host "Found: $($ahk2exe.FullName)"
-            & $ahk2exe.FullName /in "alt-ime-ahk.ahk" /out "alt-ime-ahk.exe"
-          } else {
-            Write-Host "Ahk2Exe.exe not found!"
-            exit 1
-          }
+          & "ahk/Compiler/Ahk2Exe.exe" /in "alt-ime-ahk.ahk" /out "alt-ime-ahk.exe" /base "ahk/AutoHotkey64.exe"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
