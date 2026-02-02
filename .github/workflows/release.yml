@@ -15,8 +15,11 @@ jobs:
       - name: Install AutoHotkey v2
         shell: pwsh
         run: |
-          Invoke-WebRequest -Uri "https://www.autohotkey.com/download/ahk-v2.exe" -OutFile "ahk-v2-setup.exe"
-          Start-Process -FilePath "ahk-v2-setup.exe" -Args "/S" -Wait
+          # GitHubリリースから直接ダウンロード
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/AutoHotkey/AutoHotkey/releases/latest"
+          $asset = $release.assets | Where-Object { $_.name -match "AutoHotkey_.*_setup\.exe$" } | Select-Object -First 1
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "ahk-setup.exe"
+          Start-Process -FilePath "ahk-setup.exe" -Args "/S" -Wait
 
       - name: Compile script
         shell: pwsh
